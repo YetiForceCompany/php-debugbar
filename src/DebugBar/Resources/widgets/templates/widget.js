@@ -9,9 +9,7 @@
 	 *  - data
 	 */
 	var TemplatesWidget = PhpDebugBar.Widgets.TemplatesWidget = PhpDebugBar.Widget.extend({
-
 		className: csscls('templates'),
-
 		render: function () {
 			this.$status = $('<div />').addClass(csscls('status')).appendTo(this.$el);
 

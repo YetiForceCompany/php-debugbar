@@ -10,7 +10,7 @@ $entityManager->getConnection()->getConfiguration()->setSQLLogger($debugStack);
 $debugbar->addCollector(new DebugBar\Bridge\DoctrineCollector($debugStack));
 
 $product = new Demo\Product();
-$product->setName("foobar");
+$product->setName('foobar');
 
 $entityManager->persist($product);
 $entityManager->flush();

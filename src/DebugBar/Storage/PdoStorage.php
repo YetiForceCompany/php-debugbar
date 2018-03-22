@@ -84,14 +84,12 @@ class PdoStorage implements StorageInterface
 			$where[] = "meta_$key = ?";
 			$params[] = $value;
 		}
-		if (count($where)) {
-			$where = ' WHERE ' . implode(' AND ', $where);
-		} else {
-			$where = '';
+		if (!empty($where)) {
+			$where = implode(' AND ', $where);
 		}
 
 		$sql = $this->getSqlQuery('find', [
-			'where' => $where,
+			'where' => empty($where) ? '' : sprintf(' WHERE %s', $where),
 			'offset' => $offset,
 			'limit' => $max
 		]);

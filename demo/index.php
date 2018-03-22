@@ -13,13 +13,13 @@ usleep(200);
 $debugbar['time']->stopMeasure('op2');
 
 $debugbar['messages']->addMessage('world', 'warning');
-$debugbar['messages']->addMessage(array('toto' => array('titi', 'tata')));
+$debugbar['messages']->addMessage(['toto' => ['titi', 'tata']]);
 $debugbar['messages']->addMessage('oups', 'error');
 
 $debugbar['time']->startMeasure('render');
 
-render_demo_page(function() {
-?>
+render_demo_page(function () {
+	?>
 <h2>AJAX</h2>
 <ul>
     <li><a href="ajax.php" class="ajax">load ajax content</a></li>

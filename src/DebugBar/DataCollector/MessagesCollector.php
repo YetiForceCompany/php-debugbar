@@ -11,12 +11,11 @@
 namespace DebugBar\DataCollector;
 
 use DebugBar\DataFormatter\DataFormatterInterface;
-use Psr\Log\AbstractLogger;
 
 /**
  * Provides a way to log messages.
  */
-class MessagesCollector extends AbstractLogger implements DataCollectorInterface, MessagesAggregateInterface, Renderable
+class MessagesCollector implements DataCollectorInterface, MessagesAggregateInterface, Renderable
 {
 	protected $name;
 	protected $messages = [];

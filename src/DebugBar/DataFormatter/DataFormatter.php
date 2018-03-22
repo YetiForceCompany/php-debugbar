@@ -34,7 +34,8 @@ class DataFormatter implements DataFormatterInterface
 		$output = '';
 
 		$this->dumper->dump(
-			$this->cloner->cloneVar($data), function ($line, $depth) use (&$output) {
+			$this->cloner->cloneVar($data),
+			function ($line, $depth) use (&$output) {
 				// A negative depth means "end of dump"
 				if ($depth >= 0) {
 					// Adds a two spaces indentation to the line

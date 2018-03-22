@@ -97,7 +97,11 @@ class TimeDataCollector extends DataCollector implements Renderable
 			throw new DebugBarException("Failed stopping measure '$name' because it hasn't been started");
 		}
 		$this->addMeasure(
-			$this->startedMeasures[$name]['label'], $this->startedMeasures[$name]['start'], $end, $params, $this->startedMeasures[$name]['collector']
+			$this->startedMeasures[$name]['label'],
+			$this->startedMeasures[$name]['start'],
+			$end,
+			$params,
+			$this->startedMeasures[$name]['collector']
 		);
 		unset($this->startedMeasures[$name]);
 	}

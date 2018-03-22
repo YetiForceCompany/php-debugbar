@@ -9,9 +9,7 @@
 	 *  - data
 	 */
 	var MailsWidget = PhpDebugBar.Widgets.MailsWidget = PhpDebugBar.Widget.extend({
-
 		className: csscls('mails'),
-
 		render: function () {
 			this.$list = new PhpDebugBar.Widgets.ListWidget({itemRenderer: function (li, mail) {
 					$('<span />').addClass(csscls('subject')).text(mail.subject).appendTo(li);

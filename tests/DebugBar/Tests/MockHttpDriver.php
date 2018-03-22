@@ -6,39 +6,39 @@ use DebugBar\HttpDriverInterface;
 
 class MockHttpDriver implements HttpDriverInterface
 {
-    public $headers = array();
+	public $headers = [];
 
-    public $sessionStarted = true;
+	public $sessionStarted = true;
 
-    public $session = array();
+	public $session = [];
 
-    function setHeaders(array $headers)
-    {
-        $this->headers = array_merge($this->headers, $headers);
-    }
+	public function setHeaders(array $headers)
+	{
+		$this->headers = array_merge($this->headers, $headers);
+	}
 
-    function isSessionStarted()
-    {
-        return $this->sessionStarted;
-    }
+	public function isSessionStarted()
+	{
+		return $this->sessionStarted;
+	}
 
-    function setSessionValue($name, $value)
-    {
-        $this->session[$name] = $value;
-    }
+	public function setSessionValue($name, $value)
+	{
+		$this->session[$name] = $value;
+	}
 
-    function hasSessionValue($name)
-    {
-        return array_key_exists($name, $this->session);
-    }
+	public function hasSessionValue($name)
+	{
+		return array_key_exists($name, $this->session);
+	}
 
-    function getSessionValue($name)
-    {
-        return $this->session[$name];
-    }
+	public function getSessionValue($name)
+	{
+		return $this->session[$name];
+	}
 
-    function deleteSessionValue($name)
-    {
-        unset($this->session[$name]);
-    }
+	public function deleteSessionValue($name)
+	{
+		unset($this->session[$name]);
+	}
 }

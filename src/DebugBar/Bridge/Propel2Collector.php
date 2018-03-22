@@ -64,7 +64,8 @@ class Propel2Collector extends DataCollector implements Renderable, AssetProvide
 	 * @param ConnectionInterface $connection Propel connection
 	 */
 	public function __construct(
-	ConnectionInterface $connection, array $logMethods = [
+	ConnectionInterface $connection,
+		array $logMethods = [
 		'beginTransaction',
 		'commit',
 		'rollBack',

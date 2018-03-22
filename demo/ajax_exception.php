@@ -3,13 +3,13 @@
 include 'bootstrap.php';
 
 try {
-    throw new Exception('Something failed!');
+	throw new Exception('Something failed!');
 } catch (Exception $e) {
-    $debugbar['exceptions']->addException($e);
+	$debugbar['exceptions']->addException($e);
 }
 
 ?>
 error from AJAX
 <?php
-    echo $debugbarRenderer->render(false);
+	echo $debugbarRenderer->render(false);
 ?>

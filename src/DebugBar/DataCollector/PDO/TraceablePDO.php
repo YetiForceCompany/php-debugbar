@@ -14,7 +14,7 @@ class TraceablePDO extends PDO
 	protected $pdo;
 
 	/** @var array */
-	protected $executedStatements = [];
+	protected static $executedStatements = [];
 
 	public function __construct(PDO $pdo)
 	{
@@ -248,7 +248,7 @@ class TraceablePDO extends PDO
 	 */
 	public function addExecutedStatement(TracedStatement $stmt)
 	{
-		$this->executedStatements[] = $stmt;
+		self::$executedStatements[] = $stmt;
 	}
 
 	/**
@@ -258,7 +258,7 @@ class TraceablePDO extends PDO
 	 */
 	public function getAccumulatedStatementsDuration()
 	{
-		return array_reduce($this->executedStatements, function ($v, $s) {
+		return array_reduce(self::$executedStatements, function ($v, $s) {
 			return $v + $s->getDuration();
 		});
 	}
@@ -270,7 +270,7 @@ class TraceablePDO extends PDO
 	 */
 	public function getMemoryUsage()
 	{
-		return array_reduce($this->executedStatements, function ($v, $s) {
+		return array_reduce(self::$executedStatements, function ($v, $s) {
 			return $v + $s->getMemoryUsage();
 		});
 	}
@@ -282,7 +282,7 @@ class TraceablePDO extends PDO
 	 */
 	public function getPeakMemoryUsage()
 	{
-		return array_reduce($this->executedStatements, function ($v, $s) {
+		return array_reduce(self::$executedStatements, function ($v, $s) {
 			$m = $s->getEndMemory();
 			return $m > $v ? $m : $v;
 		});
@@ -295,7 +295,7 @@ class TraceablePDO extends PDO
 	 */
 	public function getExecutedStatements()
 	{
-		return $this->executedStatements;
+		return self::$executedStatements;
 	}
 
 	/**
@@ -305,7 +305,7 @@ class TraceablePDO extends PDO
 	 */
 	public function getFailedExecutedStatements()
 	{
-		return array_filter($this->executedStatements, function ($s) {
+		return array_filter(self::$executedStatements, function ($s) {
 			return !$s->isSuccess();
 		});
 	}

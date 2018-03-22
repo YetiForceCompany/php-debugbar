@@ -12,13 +12,13 @@ if (typeof (PhpDebugBar) == 'undefined') {
 	PhpDebugBar.Widgets = {};
 
 	/**
-	 * Replaces spaces with &nbsp; and line breaks with <br>
+	 * Replaces spaces with &nbsp; and line breaks with <br />
 	 *
 	 * @param {String} text
 	 * @return {String}
 	 */
 	var htmlize = PhpDebugBar.Widgets.htmlize = function (text) {
-		return text.replace(/\n/g, '<br>').replace(/\s/g, "&nbsp;")
+		return text.replace(/\n/g, '<br />').replace(/\s/g, "&nbsp;")
 	};
 
 	/**
@@ -97,18 +97,14 @@ if (typeof (PhpDebugBar) == 'undefined') {
 	 *  - itemRenderer: a function used to render list items (optional)
 	 */
 	var ListWidget = PhpDebugBar.Widgets.ListWidget = PhpDebugBar.Widget.extend({
-
 		tagName: 'ul',
-
 		className: csscls('list'),
-
 		initialize: function (options) {
 			if (!options['itemRenderer']) {
 				options['itemRenderer'] = this.itemRenderer;
 			}
 			this.set(options);
 		},
-
 		render: function () {
 			this.bindAttr(['itemRenderer', 'data'], function () {
 				this.$el.empty();
@@ -123,7 +119,6 @@ if (typeof (PhpDebugBar) == 'undefined') {
 				}
 			});
 		},
-
 		/**
 		 * Renders the content of a <li> element
 		 *
@@ -146,11 +141,8 @@ if (typeof (PhpDebugBar) == 'undefined') {
 	 *  - itemRenderer: a function used to render list items (optional)
 	 */
 	var KVListWidget = PhpDebugBar.Widgets.KVListWidget = ListWidget.extend({
-
 		tagName: 'dl',
-
 		className: csscls('kvlist'),
-
 		render: function () {
 			this.bindAttr(['itemRenderer', 'data'], function () {
 				this.$el.empty();
@@ -166,7 +158,6 @@ if (typeof (PhpDebugBar) == 'undefined') {
 				});
 			});
 		},
-
 		/**
 		 * Renders the content of the <dt> and <dd> elements
 		 *
@@ -187,14 +178,12 @@ if (typeof (PhpDebugBar) == 'undefined') {
 	/**
 	 * An extension of KVListWidget where the data represents a list
 	 * of variables
-	 *
+	 * 
 	 * Options:
 	 *  - data
 	 */
 	var VariableListWidget = PhpDebugBar.Widgets.VariableListWidget = KVListWidget.extend({
-
 		className: csscls('kvlist varlist'),
-
 		itemRenderer: function (dt, dd, key, value) {
 			$('<span />').attr('title', key).text(key).appendTo(dt);
 
@@ -224,11 +213,8 @@ if (typeof (PhpDebugBar) == 'undefined') {
 	 *  - data
 	 */
 	var IFrameWidget = PhpDebugBar.Widgets.IFrameWidget = PhpDebugBar.Widget.extend({
-
 		tagName: 'iframe',
-
 		className: csscls('iframe'),
-
 		render: function () {
 			this.$el.attr({
 				seamless: "seamless",
@@ -257,9 +243,7 @@ if (typeof (PhpDebugBar) == 'undefined') {
 	 *  - data
 	 */
 	var MessagesWidget = PhpDebugBar.Widgets.MessagesWidget = PhpDebugBar.Widget.extend({
-
 		className: csscls('messages'),
-
 		render: function () {
 			var self = this;
 
@@ -346,7 +330,6 @@ if (typeof (PhpDebugBar) == 'undefined') {
 				this.$list.set('data', fdata);
 			});
 		},
-
 		onFilterClick: function (el) {
 			$(el).toggleClass(csscls('excluded'));
 
@@ -369,11 +352,8 @@ if (typeof (PhpDebugBar) == 'undefined') {
 	 *  - data
 	 */
 	var TimelineWidget = PhpDebugBar.Widgets.TimelineWidget = PhpDebugBar.Widget.extend({
-
 		tagName: 'ul',
-
 		className: csscls('timeline'),
-
 		render: function () {
 			this.bindAttr('data', function (data) {
 				this.$el.empty();
@@ -431,9 +411,7 @@ if (typeof (PhpDebugBar) == 'undefined') {
 	 *  - data
 	 */
 	var ExceptionsWidget = PhpDebugBar.Widgets.ExceptionsWidget = PhpDebugBar.Widget.extend({
-
 		className: csscls('exceptions'),
-
 		render: function () {
 			this.$list = new ListWidget({itemRenderer: function (li, e) {
 					$('<span />').addClass(csscls('message')).text(e.message).appendTo(li);
@@ -466,6 +444,97 @@ if (typeof (PhpDebugBar) == 'undefined') {
 		}
 
 	});
+	var DebugLogsWidget = PhpDebugBar.Widgets.DebugLogsWidget = PhpDebugBar.Widget.extend({
+		className: csscls('messages'),
+		render: function () {
+			var self = this;
 
+			this.$list = new ListWidget({itemRenderer: function (li, value) {
+					var m = value.message;
+					var val = $('<span />').addClass(csscls('value')).text(m).appendTo(li);
+					var prettyVal = value.message;
+					if (!value.is_string) {
+						prettyVal = null;
+					}
+					li.css('cursor', 'pointer').click(function () {
+						if (val.hasClass(csscls('pretty'))) {
+							val.text(m).removeClass(csscls('pretty'));
+						} else {
+							prettyVal = prettyVal || createCodeBlock(value.trace, 'php');
+							val.addClass(csscls('pretty')).append(prettyVal);
+						}
+					});
+					if (value.label) {
+						val.addClass(csscls(value.label));
+						$('<span />').addClass(csscls('label')).text(value.label).appendTo(li);
+					}
+					if (value.collector) {
+						$('<span />').addClass(csscls('collector')).text(value.collector).appendTo(li);
+					}
+				}});
+
+			this.$list.$el.appendTo(this.$el);
+			this.$toolbar = $('<div><i class="phpdebugbar-fa phpdebugbar-fa-search"></i></div>').addClass(csscls('toolbar')).appendTo(this.$el);
+			$('<input type="text" />')
+					.on('change', function () {
+						self.set('search', this.value);
+					}).css('border', 'solid 1px #000')
+					.appendTo(this.$toolbar);
+
+			this.bindAttr('data', function (data) {
+				this.set({exclude: [], search: ''});
+				this.$toolbar.find(csscls('.filter')).remove();
+
+				var filters = [], self = this;
+				for (var i = 0; i < data.length; i++) {
+					if (!data[i].label || $.inArray(data[i].label, filters) > -1) {
+						continue;
+					}
+					filters.push(data[i].label);
+					$('<a />')
+							.addClass(csscls('filter'))
+							.text(data[i].label)
+							.attr('rel', data[i].label)
+							.on('click', function () {
+								self.onFilterClick(this);
+							})
+							.appendTo(this.$toolbar);
+				}
+			});
+
+			this.bindAttr(['exclude', 'search'], function () {
+				var data = this.get('data'),
+						exclude = this.get('exclude'),
+						search = this.get('search'),
+						caseless = false,
+						fdata = [];
+
+				if (search && search === search.toLowerCase()) {
+					caseless = true;
+				}
+
+				for (var i = 0; i < data.length; i++) {
+					var message = caseless ? data[i].message.toLowerCase() : data[i].message;
+
+					if ((!data[i].label || $.inArray(data[i].label, exclude) === -1) && (!search || message.indexOf(search) > -1)) {
+						fdata.push(data[i]);
+					}
+				}
+
+				this.$list.set('data', fdata);
+			});
+		},
+		onFilterClick: function (el) {
+			$(el).toggleClass(csscls('excluded'));
+
+			var excludedLabels = [];
+			this.$toolbar.find(csscls('.filter') + csscls('.excluded')).each(function () {
+				excludedLabels.push(this.rel);
+			});
+
+			this.set('exclude', excludedLabels);
+		}
+
+	});
 
 })(PhpDebugBar.$);

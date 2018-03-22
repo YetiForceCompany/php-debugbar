@@ -11,13 +11,10 @@ if (typeof (PhpDebugBar) == 'undefined') {
 	};
 
 	PhpDebugBar.OpenHandler = PhpDebugBar.Widget.extend({
-
 		className: 'phpdebugbar-openhandler',
-
 		defaults: {
 			items_per_page: 20
 		},
-
 		render: function () {
 			var self = this;
 
@@ -66,13 +63,11 @@ if (typeof (PhpDebugBar) == 'undefined') {
 				self.hide();
 			});
 		},
-
 		refresh: function () {
 			this.$table.empty();
 			this.$loadmorebtn.show();
 			this.find({}, 0, this.handleFind.bind(this));
 		},
-
 		addSearch: function () {
 			var self = this;
 			var searchBtn = $('<button />')
@@ -93,14 +88,13 @@ if (typeof (PhpDebugBar) == 'undefined') {
 					});
 
 			$('<form />')
-					.append('<br/><b>Filter results</b><br/>')
-					.append('Method: <select name="method"><option></option><option>GET</option><option>POST</option><option>PUT</option><option>DELETE</option></select><br/>')
-					.append('Uri: <input type="text" name="uri"><br/>')
-					.append('IP: <input type="text" name="ip"><br/>')
+					.append('<br /><b>Filter results</b><br />')
+					.append('Method: <select name="method"><option></option><option>GET</option><option>POST</option><option>PUT</option><option>DELETE</option></select><br />')
+					.append('Uri: <input type="text" name="uri"><br />')
+					.append('IP: <input type="text" name="ip"><br />')
 					.append(searchBtn)
 					.appendTo(this.$actions);
 		},
-
 		handleFind: function (data) {
 			var self = this;
 			$.each(data, function (i, meta) {
@@ -160,33 +154,27 @@ if (typeof (PhpDebugBar) == 'undefined') {
 				this.$loadmorebtn.hide();
 			}
 		},
-
 		show: function (callback) {
 			this.callback = callback;
 			this.$el.show();
 			this.$overlay.show();
 			this.refresh();
 		},
-
 		hide: function () {
 			this.$el.hide();
 			this.$overlay.hide();
 		},
-
 		find: function (filters, offset, callback) {
 			var data = $.extend({}, filters, {max: this.get('items_per_page'), offset: offset || 0});
 			this.last_find_request = data;
 			this.ajax(data, callback);
 		},
-
 		load: function (id, callback) {
 			this.ajax({op: "get", id: id}, callback);
 		},
-
 		clear: function (callback) {
 			this.ajax({op: "clear"}, callback);
 		},
-
 		ajax: function (data, callback) {
 			$.ajax({
 				dataType: 'json',

@@ -10,7 +10,7 @@ use DebugBar\Bridge\PropelCollector;
 $debugbar->addCollector(new PropelCollector());
 
 Propel::init('build/conf/demo-conf.php');
-set_include_path("build/classes" . PATH_SEPARATOR . get_include_path());
+set_include_path('build/classes' . PATH_SEPARATOR . get_include_path());
 
 PropelCollector::enablePropelProfiling();
 

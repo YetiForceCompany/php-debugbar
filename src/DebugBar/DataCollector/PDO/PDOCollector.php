@@ -16,16 +16,17 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
 	protected $timeCollector;
 	protected $renderSqlWithParams = false;
 	protected $sqlQuotationChar = '<>';
+	public $connectType = 'master';
 
 	/**
 	 * @param TraceablePDO      $pdo
 	 * @param TimeDataCollector $timeCollector
 	 */
-	public function __construct(TraceablePDO $pdo = null, TimeDataCollector $timeCollector = null)
+	public function __construct(TraceablePDO $pdo = null, TimeDataCollector $timeCollector = null, $dbName = 'base')
 	{
 		$this->timeCollector = $timeCollector;
 		if ($pdo !== null) {
-			$this->addConnection($pdo, 'default');
+			$this->addConnection($pdo, $dbName);
 		}
 	}
 
@@ -124,6 +125,9 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
 	 */
 	protected function collectPDO(TraceablePDO $pdo, TimeDataCollector $timeCollector = null)
 	{
+		$config = \App\Db::getConfig($this->connectType);
+		$dbName = $config['dbName'];
+		$driverName = $pdo->getAttribute(\PDO::ATTR_DRIVER_NAME);
 		$stmts = [];
 		foreach ($pdo->getExecutedStatements() as $stmt) {
 			$stmts[] = [
@@ -140,7 +144,11 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
 				'end_memory_str' => $this->getDataFormatter()->formatBytes($stmt->getEndMemory()),
 				'is_success' => $stmt->isSuccess(),
 				'error_code' => $stmt->getErrorCode(),
-				'error_message' => $stmt->getErrorMessage()
+				'error_message' => $stmt->getErrorMessage(),
+				'backtrace' => $stmt->getBackTrace(),
+				'driverName' => $driverName,
+				'dbName' => $dbName,
+				'connectType' => $this->connectType,
 			];
 			if ($timeCollector !== null) {
 				$timeCollector->addMeasure($stmt->getSql(), $stmt->getStartTime(), $stmt->getEndTime());

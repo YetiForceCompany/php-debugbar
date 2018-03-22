@@ -64,7 +64,7 @@ class JavascriptRenderer
 		$this->debugBar = $debugBar;
 
 		if ($baseUrl === null) {
-			$baseUrl = '/vendor/maximebf/debugbar/src/DebugBar/Resources';
+			$baseUrl = 'vendor/php-debugbar/src/DebugBar/Resources';
 		}
 		$this->baseUrl = $baseUrl;
 
@@ -777,7 +777,7 @@ class JavascriptRenderer
 	 * @param bool $renderStackedData
 	 * @param bool $head
 	 *
-	 * @return string Return "{--DEBUGBAR_OB_START_REPLACE_ME--}" or return an empty string if $here == false
+	 * @return string Return "{--DEBUGBAR_OB_START_REPLACE_ME--}" or return an empty string if $here === false
 	 */
 	public function renderOnShutdown($here = true, $initialize = true, $renderStackedData = true, $head = false)
 	{
@@ -926,10 +926,22 @@ class JavascriptRenderer
 				if (!isset($opts['title'])) {
 					$opts['title'] = ucfirst(str_replace('_', ' ', $name));
 				}
-				$js .= sprintf("%s.addTab(\"%s\", new %s({%s%s}));\n", $varname, $name, $options['tab'] ?? 'PhpDebugBar.DebugBar.Tab', substr(json_encode($opts, JSON_FORCE_OBJECT), 1, -1), isset($options['widget']) ? sprintf('%s"widget": new %s()', count($opts) ? ', ' : '', $options['widget']) : ''
+				$js .= sprintf(
+					"%s.addTab(\"%s\", new %s({%s%s}));\n",
+					$varname,
+					$name,
+					$options['tab'] ?? 'PhpDebugBar.DebugBar.Tab',
+					substr(json_encode($opts, JSON_FORCE_OBJECT), 1, -1),
+					isset($options['widget']) ? sprintf('%s"widget": new %s()', count($opts) ? ', ' : '', $options['widget']) : ''
 				);
 			} elseif (isset($options['indicator']) || isset($options['icon'])) {
-				$js .= sprintf("%s.addIndicator(\"%s\", new %s(%s), \"%s\");\n", $varname, $name, $options['indicator'] ?? 'PhpDebugBar.DebugBar.Indicator', json_encode($opts, JSON_FORCE_OBJECT), $options['position'] ?? 'right'
+				$js .= sprintf(
+					"%s.addIndicator(\"%s\", new %s(%s), \"%s\");\n",
+					$varname,
+					$name,
+					$options['indicator'] ?? 'PhpDebugBar.DebugBar.Indicator',
+					json_encode($opts, JSON_FORCE_OBJECT),
+					$options['position'] ?? 'right'
 				);
 			}
 
@@ -962,7 +974,12 @@ class JavascriptRenderer
 	 */
 	protected function getAddDatasetCode($requestId, $data, $suffix = null)
 	{
-		$js = sprintf("%s.addDataSet(%s, \"%s\"%s);\n", $this->variableName, json_encode($data), $requestId, $suffix ? ', ' . json_encode($suffix) : ''
+		$js = sprintf(
+			"%s.addDataSet(%s, \"%s\"%s);\n",
+			$this->variableName,
+			json_encode($data),
+			$requestId,
+			$suffix ? ', ' . json_encode($suffix) : ''
 		);
 		return $js;
 	}

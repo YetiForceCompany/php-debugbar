@@ -10,6 +10,6 @@ $twig = new DebugBar\Bridge\Twig\TraceableTwigEnvironment(new Twig_Environment($
 
 $debugbar->addCollector(new DebugBar\Bridge\Twig\TwigCollector($twig));
 
-render_demo_page(function() use ($twig) {
-    echo $twig->render('hello.html', array('name' => 'peter pan'));
+render_demo_page(function () use ($twig) {
+	echo $twig->render('hello.html', ['name' => 'peter pan']);
 });

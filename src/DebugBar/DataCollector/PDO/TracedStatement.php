@@ -17,6 +17,7 @@ class TracedStatement
 	protected $endMemory;
 	protected $memoryDelta;
 	protected $exception;
+	protected $backtrace;
 
 	/**
 	 * @param string $sql
@@ -28,6 +29,7 @@ class TracedStatement
 		$this->sql = $sql;
 		$this->parameters = $this->checkParameters($params);
 		$this->preparedId = $preparedId;
+		$this->backtrace = \App\Debuger::getBacktrace();
 	}
 
 	/**
@@ -246,5 +248,15 @@ class TracedStatement
 	public function getErrorMessage()
 	{
 		return $this->exception !== null ? $this->exception->getMessage() : '';
+	}
+
+	/**
+	 * Returns the back trace message.
+	 *
+	 * @return array
+	 */
+	public function getBackTrace()
+	{
+		return nl2br($this->backtrace);
 	}
 }

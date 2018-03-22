@@ -105,13 +105,12 @@ class TraceablePDOStatement extends PDOStatement
 	 */
 	public function execute($input_parameters = null)
 	{
-		$preparedId = spl_object_hash($this);
 		$boundParameters = $this->boundParameters;
 		if (is_array($input_parameters)) {
 			$boundParameters = array_merge($boundParameters, $input_parameters);
 		}
 
-		$trace = new TracedStatement($this->queryString, $boundParameters, $preparedId);
+		$trace = new TracedStatement($this->queryString, $boundParameters);
 		$trace->start();
 
 		$ex = null;

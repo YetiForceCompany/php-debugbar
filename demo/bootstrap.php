@@ -9,8 +9,8 @@ use DebugBar\StandardDebugBar;
 
 $debugbar = new StandardDebugBar();
 $debugbarRenderer = $debugbar->getJavascriptRenderer()
-                             ->setBaseUrl('../src/DebugBar/Resources')
-                             ->setEnableJqueryNoConflict(false);
+	->setBaseUrl('../src/DebugBar/Resources')
+	->setEnableJqueryNoConflict(false);
 
 //
 // create a writable profiles folder in the demo directory to uncomment the following lines
@@ -21,11 +21,10 @@ $debugbarRenderer = $debugbar->getJavascriptRenderer()
 
 function render_demo_page(Closure $callback = null)
 {
-    global $debugbarRenderer;
-?>
+	global $debugbarRenderer; ?>
 <html>
     <head>
-        <?php echo $debugbarRenderer->renderHead() ?>
+        <?php echo $debugbarRenderer->renderHead(); ?>
         <script type="text/javascript">
             $(function() {
                 $('.ajax').click(function() {
@@ -41,10 +40,11 @@ function render_demo_page(Closure $callback = null)
     <body>
         <h1>DebugBar Demo</h1>
         <p>DebugBar at the bottom of the page</p>
-        <?php if ($callback) $callback(); ?>
+        <?php if ($callback) {
+		$callback();
+	} ?>
         <?php
-            echo $debugbarRenderer->render();
-        ?>
+			echo $debugbarRenderer->render(); ?>
     </body>
 </html>
 <?php
