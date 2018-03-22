@@ -11,26 +11,26 @@
 namespace DebugBar\DataCollector;
 
 /**
- * Collects info about PHP
+ * Collects info about PHP.
  */
 class PhpInfoCollector extends DataCollector
 {
-    /**
-     * @return array
-     */
-    public function collect()
-    {
-        return array(
-            'version' => PHP_VERSION,
-            'interface' => PHP_SAPI
-        );
-    }
+	/**
+	 * @return array
+	 */
+	public function collect()
+	{
+		return [
+			'version' => PHP_VERSION,
+			'interface' => PHP_SAPI
+		];
+	}
 
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return 'php';
-    }
+	/**
+	 * @return string
+	 */
+	public function getName()
+	{
+		return 'php';
+	}
 }

@@ -14,81 +14,81 @@ use DebugBar\DataFormatter\DataFormatter;
 use DebugBar\DataFormatter\DataFormatterInterface;
 
 /**
- * Abstract class for data collectors
+ * Abstract class for data collectors.
  */
 abstract class DataCollector implements DataCollectorInterface
 {
-    private static $defaultDataFormatter;
+	private static $defaultDataFormatter;
+	protected $dataFormater;
 
-    protected $dataFormater;
+	/**
+	 * Sets the default data formater instance used by all collectors subclassing this class.
+	 *
+	 * @param DataFormatterInterface $formater
+	 */
+	public static function setDefaultDataFormatter(DataFormatterInterface $formater)
+	{
+		self::$defaultDataFormatter = $formater;
+	}
 
-    /**
-     * Sets the default data formater instance used by all collectors subclassing this class
-     *
-     * @param DataFormatterInterface $formater
-     */
-    public static function setDefaultDataFormatter(DataFormatterInterface $formater)
-    {
-        self::$defaultDataFormatter = $formater;
-    }
+	/**
+	 * Returns the default data formater.
+	 *
+	 * @return DataFormatterInterface
+	 */
+	public static function getDefaultDataFormatter()
+	{
+		if (self::$defaultDataFormatter === null) {
+			self::$defaultDataFormatter = new DataFormatter();
+		}
+		return self::$defaultDataFormatter;
+	}
 
-    /**
-     * Returns the default data formater
-     *
-     * @return DataFormatterInterface
-     */
-    public static function getDefaultDataFormatter()
-    {
-        if (self::$defaultDataFormatter === null) {
-            self::$defaultDataFormatter = new DataFormatter();
-        }
-        return self::$defaultDataFormatter;
-    }
+	/**
+	 * Sets the data formater instance used by this collector.
+	 *
+	 * @param DataFormatterInterface $formater
+	 *
+	 * @return $this
+	 */
+	public function setDataFormatter(DataFormatterInterface $formater)
+	{
+		$this->dataFormater = $formater;
+		return $this;
+	}
 
-    /**
-     * Sets the data formater instance used by this collector
-     *
-     * @param DataFormatterInterface $formater
-     * @return $this
-     */
-    public function setDataFormatter(DataFormatterInterface $formater)
-    {
-        $this->dataFormater = $formater;
-        return $this;
-    }
+	/**
+	 * @return DataFormatterInterface
+	 */
+	public function getDataFormatter()
+	{
+		if ($this->dataFormater === null) {
+			$this->dataFormater = self::getDefaultDataFormatter();
+		}
+		return $this->dataFormater;
+	}
 
-    /**
-     * @return DataFormatterInterface
-     */
-    public function getDataFormatter()
-    {
-        if ($this->dataFormater === null) {
-            $this->dataFormater = self::getDefaultDataFormatter();
-        }
-        return $this->dataFormater;
-    }
+	/**
+	 * @deprecated
+	 */
+	public function formatVar($var)
+	{
+		return $this->getDataFormatter()->formatVar($var);
+	}
 
-    /**
-     * @deprecated
-     */
-    public function formatVar($var)
-    {
-        return $this->getDataFormatter()->formatVar($var);
-    }
+	/**
+	 * @deprecated
+	 */
+	public function formatDuration($seconds)
+	{
+		return $this->getDataFormatter()->formatDuration($seconds);
+	}
 
-    /**
-     * @deprecated
-     */
-    public function formatDuration($seconds)
-    {
-        return $this->getDataFormatter()->formatDuration($seconds);
-    }
-
-    /**
-     * @deprecated
-     */
-    public function formatBytes($size, $precision = 2)
-    {
-        return $this->getDataFormatter()->formatBytes($size, $precision);
-    }
+	/**
+	 * @deprecated
+	 */
+	public function formatBytes($size, $precision = 2)
+	{
+		return $this->getDataFormatter()->formatBytes($size, $precision);
+	}
 }

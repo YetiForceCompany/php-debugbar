@@ -11,47 +11,47 @@
 namespace DebugBar\DataCollector;
 
 /**
- * Collects info about the current request
+ * Collects info about the current request.
  */
 class RequestDataCollector extends DataCollector implements Renderable
 {
-    /**
-     * @return array
-     */
-    public function collect()
-    {
-        $vars = array('_GET', '_POST', '_SESSION', '_COOKIE', '_SERVER');
-        $data = array();
+	/**
+	 * @return array
+	 */
+	public function collect()
+	{
+		$vars = ['_GET', '_POST', '_SESSION', '_COOKIE', '_SERVER'];
+		$data = [];
 
-        foreach ($vars as $var) {
-            if (isset($GLOBALS[$var])) {
-                $data["$" . $var] = $this->getDataFormatter()->formatVar($GLOBALS[$var]);
-            }
-        }
+		foreach ($vars as $var) {
+			if (isset($GLOBALS[$var])) {
+				$data['$' . $var] = $this->getDataFormatter()->formatVar($GLOBALS[$var]);
+			}
+		}
 
-        return $data;
-    }
+		return $data;
+	}
 
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return 'request';
-    }
+	/**
+	 * @return string
+	 */
+	public function getName()
+	{
+		return 'request';
+	}
 
-    /**
-     * @return array
-     */
-    public function getWidgets()
-    {
-        return array(
-            "request" => array(
-                "icon" => "tags",
-                "widget" => "PhpDebugBar.Widgets.VariableListWidget",
-                "map" => "request",
-                "default" => "{}"
-            )
-        );
-    }
+	/**
+	 * @return array
+	 */
+	public function getWidgets()
+	{
+		return [
+			'request' => [
+				'icon' => 'tags',
+				'widget' => 'PhpDebugBar.Widgets.VariableListWidget',
+				'map' => 'request',
+				'default' => '{}'
+			]
+		];
+	}
 }

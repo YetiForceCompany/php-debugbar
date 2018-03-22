@@ -14,7 +14,7 @@ use ArrayAccess;
 use DebugBar\DebugBarException;
 
 /**
- * Aggregates data from multiple collectors
+ * Aggregates data from multiple collectors.
  *
  * <code>
  * $aggcollector = new AggregateCollector('foobar');
@@ -25,165 +25,167 @@ use DebugBar\DebugBarException;
  */
 class AggregatedCollector implements DataCollectorInterface, ArrayAccess
 {
-    protected $name;
+	protected $name;
+	protected $mergeProperty;
+	protected $sort;
+	protected $collectors = [];
 
-    protected $mergeProperty;
+	/**
+	 * @param string $name
+	 * @param string $mergeProperty
+	 * @param bool   $sort
+	 */
+	public function __construct($name, $mergeProperty = null, $sort = false)
+	{
+		$this->name = $name;
+		$this->mergeProperty = $mergeProperty;
+		$this->sort = $sort;
+	}
 
-    protected $sort;
+	/**
+	 * @param DataCollectorInterface $collector
+	 */
+	public function addCollector(DataCollectorInterface $collector)
+	{
+		$this->collectors[$collector->getName()] = $collector;
+	}
 
-    protected $collectors = array();
+	/**
+	 * @return array
+	 */
+	public function getCollectors()
+	{
+		return $this->collectors;
+	}
 
-    /**
-     * @param string $name
-     * @param string $mergeProperty
-     * @param boolean $sort
-     */
-    public function __construct($name, $mergeProperty = null, $sort = false)
-    {
-        $this->name = $name;
-        $this->mergeProperty = $mergeProperty;
-        $this->sort = $sort;
-    }
+	/**
+	 * Merge data from one of the key/value pair of the collected data.
+	 *
+	 * @param string $property
+	 */
+	public function setMergeProperty($property)
+	{
+		$this->mergeProperty = $property;
+	}
 
-    /**
-     * @param DataCollectorInterface $collector
-     */
-    public function addCollector(DataCollectorInterface $collector)
-    {
-        $this->collectors[$collector->getName()] = $collector;
-    }
+	/**
+	 * @return string
+	 */
+	public function getMergeProperty()
+	{
+		return $this->mergeProperty;
+	}
 
-    /**
-     * @return array
-     */
-    public function getCollectors()
-    {
-        return $this->collectors;
-    }
+	/**
+	 * Sorts the collected data.
+	 *
+	 * If true, sorts using sort()
+	 * If it is a string, sorts the data using the value from a key/value pair of the array
+	 *
+	 * @param bool|string $sort
+	 */
+	public function setSort($sort)
+	{
+		$this->sort = $sort;
+	}
 
-    /**
-     * Merge data from one of the key/value pair of the collected data
-     *
-     * @param string $property
-     */
-    public function setMergeProperty($property)
-    {
-        $this->mergeProperty = $property;
-    }
+	/**
+	 * @return bool|string
+	 */
+	public function getSort()
+	{
+		return $this->sort;
+	}
 
-    /**
-     * @return string
-     */
-    public function getMergeProperty()
-    {
-        return $this->mergeProperty;
-    }
+	/**
+	 * @return array
+	 */
+	public function collect()
+	{
+		$aggregate = [];
+		foreach ($this->collectors as $collector) {
+			$data = $collector->collect();
+			if ($this->mergeProperty !== null) {
+				$data = $data[$this->mergeProperty];
+			}
+			$aggregate = array_merge($aggregate, $data);
+		}
 
-    /**
-     * Sorts the collected data
-     *
-     * If true, sorts using sort()
-     * If it is a string, sorts the data using the value from a key/value pair of the array
-     *
-     * @param bool|string $sort
-     */
-    public function setSort($sort)
-    {
-        $this->sort = $sort;
-    }
+		return $this->sort($aggregate);
+	}
 
-    /**
-     * @return bool|string
-     */
-    public function getSort()
-    {
-        return $this->sort;
-    }
+	/**
+	 * Sorts the collected data.
+	 *
+	 * @param array $data
+	 *
+	 * @return array
+	 */
+	protected function sort($data)
+	{
+		if (is_string($this->sort)) {
+			$p = $this->sort;
+			usort($data, function ($a, $b) use ($p) {
+				if ($a[$p] == $b[$p]) {
+					return 0;
+				}
+				return $a[$p] < $b[$p] ? -1 : 1;
+			});
+		} elseif ($this->sort === true) {
+			sort($data);
+		}
+		return $data;
+	}
 
-    /**
-     * @return array
-     */
-    public function collect()
-    {
-        $aggregate = array();
-        foreach ($this->collectors as $collector) {
-            $data = $collector->collect();
-            if ($this->mergeProperty !== null) {
-                $data = $data[$this->mergeProperty];
-            }
-            $aggregate = array_merge($aggregate, $data);
-        }
+	/**
+	 * @return string
+	 */
+	public function getName()
+	{
+		return $this->name;
+	}
 
-        return $this->sort($aggregate);
-    }
+	// --------------------------------------------
+	// ArrayAccess implementation
 
-    /**
-     * Sorts the collected data
-     *
-     * @param array $data
-     * @return array
-     */
-    protected function sort($data)
-    {
-        if (is_string($this->sort)) {
-            $p = $this->sort;
-            usort($data, function ($a, $b) use ($p) {
-                if ($a[$p] == $b[$p]) {
-                    return 0;
-                }
-                return $a[$p] < $b[$p] ? -1 : 1;
-            });
-        } elseif ($this->sort === true) {
-            sort($data);
-        }
-        return $data;
-    }
+	/**
+	 * @param mixed $key
+	 * @param mixed $value
+	 *
+	 * @throws DebugBarException
+	 */
+	public function offsetSet($key, $value)
+	{
+		throw new DebugBarException('AggregatedCollector[] is read-only');
+	}
 
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
+	/**
+	 * @param mixed $key
+	 *
+	 * @return mixed
+	 */
+	public function offsetGet($key)
+	{
+		return $this->collectors[$key];
+	}
 
-    // --------------------------------------------
-    // ArrayAccess implementation
+	/**
+	 * @param mixed $key
+	 *
+	 * @return bool
+	 */
+	public function offsetExists($key)
+	{
+		return isset($this->collectors[$key]);
+	}
 
-    /**
-     * @param mixed $key
-     * @param mixed $value
-     * @throws DebugBarException
-     */
-    public function offsetSet($key, $value)
-    {
-        throw new DebugBarException("AggregatedCollector[] is read-only");
-    }
-
-    /**
-     * @param mixed $key
-     * @return mixed
-     */
-    public function offsetGet($key)
-    {
-        return $this->collectors[$key];
-    }
-
-    /**
-     * @param mixed $key
-     * @return bool
-     */
-    public function offsetExists($key)
-    {
-        return isset($this->collectors[$key]);
-    }
-
-    /**
-     * @param mixed $key
-     * @throws DebugBarException
-     */
-    public function offsetUnset($key)
-    {
-        throw new DebugBarException("AggregatedCollector[] is read-only");
-    }
+	/**
+	 * @param mixed $key
+	 *
+	 * @throws DebugBarException
+	 */
+	public function offsetUnset($key)
+	{
+		throw new DebugBarException('AggregatedCollector[] is read-only');
+	}
 }

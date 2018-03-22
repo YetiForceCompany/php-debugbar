@@ -11,15 +11,15 @@
 namespace DebugBar;
 
 /**
- * Request id generator based on the $_SERVER array
+ * Request id generator based on the $_SERVER array.
  */
 class RequestIdGenerator implements RequestIdGeneratorInterface
 {
-    /**
-     * @return string
-     */
-    public function generate()
-    {
-        return md5(serialize($_SERVER) . microtime());
-    }
+	/**
+	 * @return string
+	 */
+	public function generate()
+	{
+		return md5(serialize($_SERVER) . microtime());
+	}
 }
